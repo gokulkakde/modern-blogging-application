@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: blog
+      MYSQL_USER: bloguser
+      MYSQL_PASSWORD: blogpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./database.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    networks:
+      - blog-net
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    environment:
+      DB_HOST: db
+      DB_USER: bloguser
+      DB_PASS: blogpass
+      DB_NAME: blog
+      ROOT_URL: "http://localhost:8080/"
+    volumes:
+      - ./images:/var/www/html/images
+    depends_on:
+      - db
+    networks:
+      - blog-net
+
+volumes:
+  db_data:
+
+networks:
+  blog-net:
+    driver: bridge

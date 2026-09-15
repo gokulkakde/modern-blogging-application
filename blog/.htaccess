@@ -1,0 +1,13 @@
+# Enable Rewrite Engine
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteBase /
+
+# Prevent directory browsing
+Options -Indexes
+
+# Security: prevent access to .sql files or hidden dotfiles
+<FilesMatch "(^#.*#|\.(bak|config|dist|fla|inc|ini|log|psd|sh|sql|sw[op])|~)$">
+    Require all denied
+</FilesMatch>
+</IfModule>
